@@ -1,5 +1,4 @@
 #pragma once
-#include "atlock.hpp"
 #include <atomic>
 #include <iostream>
 #include <limits.h>
@@ -8,9 +7,9 @@
 #include <stdint.h>
 #include <thread>
 #include <unistd.h>
-#include <utility> 
+#include <utility>
 
-template <class T, int32_t MAX_SIZE = UCHAR_MAX> class MtQueue {
+template <class T, int32_t MAX_SIZE = UCHAR_MAX> class Queue {
 protected:
   T _q[MAX_SIZE]{};
 
@@ -18,7 +17,7 @@ protected:
   int32_t _b{0};
 
 public:
-  MtQueue() = default;
+  Queue() = default;
 
   bool push(T &&obj) {
     int32_t pos = 0;
@@ -44,7 +43,7 @@ public:
 
   bool pop(T &elem) {
     int32_t end = 0;
-    int32_t start = _b.load();
+    int32_t start = _b;
     if ((end = _front) >= 0) {
       if (((end < MAX_SIZE || start < end) && start != end) || end == 0) {
         elem = _q[start];
@@ -65,6 +64,9 @@ public:
     }
   }
 }; 
+
+
+namespace mtqueue{
 
 template <class T, int32_t MAX_SIZE = UCHAR_MAX> class MtQueue {
 protected:
@@ -120,4 +122,5 @@ public:
       return false;
     }
   }
+};
 };
