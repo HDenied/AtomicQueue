@@ -16,7 +16,7 @@ FetchContent_MakeAvailable(googletest)
 
 
 
-set(HDR_FILES ${CMAKE_CURRENT_SOURCE_DIR}/src/mqueue.hpp)
+set(HDR_FILES ${CMAKE_CURRENT_SOURCE_DIR}/src/emqueue.hpp)
 set(SRC_FILES ${CMAKE_CURRENT_SOURCE_DIR}/tests/test_u_mqueue.cpp 
 ${CMAKE_CURRENT_SOURCE_DIR}/tests/test_i_mqueue.cpp)
      

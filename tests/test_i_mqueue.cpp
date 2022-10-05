@@ -1,4 +1,4 @@
-#include "mqueue.hpp"
+#include "emqueue.hpp"
 #include <algorithm>
 #include <array>
 #include <gtest/gtest.h>
@@ -10,7 +10,7 @@
 #include <thread>
 #include <vector>
 
-namespace mt = mtqueue;
+namespace mt = emtqueue;
 
 template <class T> class LockQueStd {
   std::queue<T> _q{};
@@ -123,14 +123,14 @@ void consumer(T &q, std::vector<DummyComm> &vec, uint32_t samples) {
   }
 }
 
-TEST(testInterleavedAtomic, size1samples100000) {
+TEST(testInterleavedAtomicOneDepth, size1samples100000) {
   std::vector<DummyComm> vec{};
   const uint32_t SIZE_Q = 1;
   uint32_t samples = 100000;
-  mt::MtQueue<DummyComm, SIZE_Q> q{};
-  std::thread prod{(producer_m<mt::MtQueue<DummyComm, SIZE_Q>>), std::ref(q),
+  mt::EMtQueue<DummyComm, SIZE_Q> q{};
+  std::thread prod{(producer_m<mt::EMtQueue<DummyComm, SIZE_Q>>), std::ref(q),
                    samples};
-  std::thread cons{(consumer_m<mt::MtQueue<DummyComm, SIZE_Q>>), std::ref(q),
+  std::thread cons{(consumer_m<mt::EMtQueue<DummyComm, SIZE_Q>>), std::ref(q),
                    std::ref(vec), samples};
   prod.join(), cons.join();
   uint32_t idx{};
@@ -140,14 +140,14 @@ TEST(testInterleavedAtomic, size1samples100000) {
   }
 }
 
-TEST(testInterleavedAtomic, size10samples100000) {
+TEST(testInterleavedAtomicSmallDepth, size10samples100000) {
   std::vector<DummyComm> vec{};
   const uint32_t SIZE_Q = 10;
   uint32_t samples = 100000;
-  mt::MtQueue<DummyComm, SIZE_Q> q{};
-  std::thread prod{(producer_m<mt::MtQueue<DummyComm, SIZE_Q>>), std::ref(q),
+  mt::EMtQueue<DummyComm, SIZE_Q> q{};
+  std::thread prod{(producer_m<mt::EMtQueue<DummyComm, SIZE_Q>>), std::ref(q),
                    samples};
-  std::thread cons{(consumer_m<mt::MtQueue<DummyComm, SIZE_Q>>), std::ref(q),
+  std::thread cons{(consumer_m<mt::EMtQueue<DummyComm, SIZE_Q>>), std::ref(q),
                    std::ref(vec), samples};
   prod.join(), cons.join();
   uint32_t idx{};
@@ -157,14 +157,14 @@ TEST(testInterleavedAtomic, size10samples100000) {
   }
 }
 
-TEST(testInterleavedAtomic, size1000samples100000) {
+TEST(testInterleavedAtomicMediumDepth, size1000samples100000) {
   std::vector<DummyComm> vec{};
   const uint32_t SIZE_Q = 1000;
   uint32_t samples = 100000;
-  mt::MtQueue<DummyComm, SIZE_Q> q{};
-  std::thread prod{(producer_m<mt::MtQueue<DummyComm, SIZE_Q>>), std::ref(q),
+  mt::EMtQueue<DummyComm, SIZE_Q> q{};
+  std::thread prod{(producer_m<mt::EMtQueue<DummyComm, SIZE_Q>>), std::ref(q),
                    samples};
-  std::thread cons{(consumer_m<mt::MtQueue<DummyComm, SIZE_Q>>), std::ref(q),
+  std::thread cons{(consumer_m<mt::EMtQueue<DummyComm, SIZE_Q>>), std::ref(q),
                    std::ref(vec), samples};
   prod.join(), cons.join();
   uint32_t idx{};
@@ -174,14 +174,14 @@ TEST(testInterleavedAtomic, size1000samples100000) {
   }
 }
 
-TEST(testInterleavedAtomic, size100000samples100000) {
+TEST(testInterleavedAtomicFullDepth, size100000samples100000) {
   std::vector<DummyComm> vec{};
   const uint32_t SIZE_Q = 100000;
   uint32_t samples = 100000;
-  mt::MtQueue<DummyComm, SIZE_Q> q{};
-  std::thread prod{(producer_m<mt::MtQueue<DummyComm, SIZE_Q>>), std::ref(q),
+  mt::EMtQueue<DummyComm, SIZE_Q> q{};
+  std::thread prod{(producer_m<mt::EMtQueue<DummyComm, SIZE_Q>>), std::ref(q),
                    samples};
-  std::thread cons{(consumer_m<mt::MtQueue<DummyComm, SIZE_Q>>), std::ref(q),
+  std::thread cons{(consumer_m<mt::EMtQueue<DummyComm, SIZE_Q>>), std::ref(q),
                    std::ref(vec), samples};
   prod.join(), cons.join();
   uint32_t idx{};
@@ -191,14 +191,14 @@ TEST(testInterleavedAtomic, size100000samples100000) {
   }
 }
 
-TEST(testInterleavedAtomic, size1samples1000000) {
+TEST(testInterleavedAtomicOneDepth, size1samples1000000) {
   std::vector<DummyComm> vec{};
   const uint32_t SIZE_Q = 1;
   uint32_t samples = 1000000;
-  mt::MtQueue<DummyComm, SIZE_Q> q{};
-  std::thread prod{(producer_m<mt::MtQueue<DummyComm, SIZE_Q>>), std::ref(q),
+  mt::EMtQueue<DummyComm, SIZE_Q> q{};
+  std::thread prod{(producer_m<mt::EMtQueue<DummyComm, SIZE_Q>>), std::ref(q),
                    samples};
-  std::thread cons{(consumer_m<mt::MtQueue<DummyComm, SIZE_Q>>), std::ref(q),
+  std::thread cons{(consumer_m<mt::EMtQueue<DummyComm, SIZE_Q>>), std::ref(q),
                    std::ref(vec), samples};
   prod.join(), cons.join();
   uint32_t idx{};
@@ -208,14 +208,14 @@ TEST(testInterleavedAtomic, size1samples1000000) {
   }
 }
 
-TEST(testInterleavedAtomic, size10samples1000000) {
+TEST(testInterleavedAtomicSmallDepth, size10samples1000000) {
   std::vector<DummyComm> vec{};
   const uint32_t SIZE_Q = 10;
   uint32_t samples = 1000000;
-  mt::MtQueue<DummyComm, SIZE_Q> q{};
-  std::thread prod{(producer_m<mt::MtQueue<DummyComm, SIZE_Q>>), std::ref(q),
+  mt::EMtQueue<DummyComm, SIZE_Q> q{};
+  std::thread prod{(producer_m<mt::EMtQueue<DummyComm, SIZE_Q>>), std::ref(q),
                    samples};
-  std::thread cons{(consumer_m<mt::MtQueue<DummyComm, SIZE_Q>>), std::ref(q),
+  std::thread cons{(consumer_m<mt::EMtQueue<DummyComm, SIZE_Q>>), std::ref(q),
                    std::ref(vec), samples};
   prod.join(), cons.join();
   uint32_t idx{};
@@ -225,14 +225,14 @@ TEST(testInterleavedAtomic, size10samples1000000) {
   }
 }
 
-TEST(testInterleavedAtomic, size1000samples1000000) {
+TEST(testInterleavedAtomicMediumDepth, size1000samples1000000) {
   std::vector<DummyComm> vec{};
   const uint32_t SIZE_Q = 1000;
   uint32_t samples = 1000000;
-  mt::MtQueue<DummyComm, SIZE_Q> q{};
-  std::thread prod{(producer_m<mt::MtQueue<DummyComm, SIZE_Q>>), std::ref(q),
+  mt::EMtQueue<DummyComm, SIZE_Q> q{};
+  std::thread prod{(producer_m<mt::EMtQueue<DummyComm, SIZE_Q>>), std::ref(q),
                    samples};
-  std::thread cons{(consumer_m<mt::MtQueue<DummyComm, SIZE_Q>>), std::ref(q),
+  std::thread cons{(consumer_m<mt::EMtQueue<DummyComm, SIZE_Q>>), std::ref(q),
                    std::ref(vec), samples};
   prod.join(), cons.join();
   uint32_t idx{};
