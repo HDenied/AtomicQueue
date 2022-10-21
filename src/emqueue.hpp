@@ -43,6 +43,28 @@ public:
     }
   }
 
+  bool push(T &obj) {
+    int32_t pos = 0;
+    if ((pos = _front.load(std::memory_order_acquire)) < MAX_SIZE) {
+
+      if (pos != -1) {
+        _q[pos] = obj;
+        pos++;
+      } else {
+        _q[0] = obj;
+        pos = 1;
+      }
+
+      _front.store(pos, std::memory_order_release);
+      // still some slots are available for writing
+      return true;
+    }
+    // writer is at the end of the queue
+    else {
+      return false;
+    }
+  }
+
   bool pop(T &elem) {
     int32_t end = 0;
     int32_t start = _b.load();

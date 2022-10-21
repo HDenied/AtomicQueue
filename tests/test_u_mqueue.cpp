@@ -1,7 +1,7 @@
 #include "emqueue.hpp"
+#include <ctime>
 #include <gtest/gtest.h>
 #include <string>
-#include <ctime>
 
 using namespace std::chrono;
 namespace mt = emtqueue;
@@ -98,5 +98,22 @@ TEST(EMtQueueTest, testWaitPopSamplesWait) {
   std::time_t t1 = std::time(0);
   ASSERT_EQ(q.wait_pop(dm, 1000000), false);
   std::time_t t2 = std::time(0);
-  ASSERT_GE(t2-t1,1);
+  ASSERT_GE(t2 - t1, 1);
+}
+
+TEST(EMtQueueTest, testWaitPassByReference) {
+  mt::EMtQueue<DummyVal> q{};
+  DummyVal out{};
+  {
+    
+    for (int32_t idx = 0; idx < 5; idx++) {
+      DummyVal in{idx,idx};
+      q.push(in);
+    }
+  }
+  for (int32_t idx = 0; idx < 5; idx++) {
+    q.wait_pop(out, 100000000);
+    ASSERT_EQ(out.val1, idx);
+    ASSERT_EQ(out.val2, idx);
+  }
 }
