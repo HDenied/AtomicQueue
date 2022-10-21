@@ -1,7 +1,9 @@
 #include "emqueue.hpp"
 #include <gtest/gtest.h>
 #include <string>
+#include <ctime>
 
+using namespace std::chrono;
 namespace mt = emtqueue;
 
 struct DummyVal {
@@ -75,4 +77,26 @@ TEST(EMtQueueTest, testDepth100000Sample100000) {
     ASSERT_EQ(dm.val1, idx);
     ASSERT_EQ(dm.val2, idx);
   }
+}
+
+TEST(EMtQueueTest, testWaitPopSamplesNoWait) {
+  mt::EMtQueue<DummyVal> q{};
+  DummyVal dm{};
+  for (int32_t idx = 0; idx < 5; idx++) {
+    q.push(DummyVal{idx, idx});
+  }
+  for (int32_t idx = 0; idx < 5; idx++) {
+    q.wait_pop(dm, 100000000);
+    ASSERT_EQ(dm.val1, idx);
+    ASSERT_EQ(dm.val2, idx);
+  }
+}
+
+TEST(EMtQueueTest, testWaitPopSamplesWait) {
+  mt::EMtQueue<DummyVal> q{};
+  DummyVal dm{};
+  std::time_t t1 = std::time(0);
+  ASSERT_EQ(q.wait_pop(dm, 1000000), false);
+  std::time_t t2 = std::time(0);
+  ASSERT_GE(t2-t1,1);
 }

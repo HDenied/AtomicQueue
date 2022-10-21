@@ -56,12 +56,21 @@ public:
         _b.store(0, std::memory_order_release);
         _front.store(-1, std::memory_order_acquire);
         return false;
-      } else  {
+      } else {
         return false;
       }
     }
     // Queue is empty
     else {
+      return false;
+    }
+  }
+
+  bool wait_pop(T &elem, uint32_t timeout_us = 1000) {
+    if (pop(elem)) {
+      return true;
+    } else {
+      usleep(timeout_us);
       return false;
     }
   }
