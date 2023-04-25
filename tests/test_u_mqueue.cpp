@@ -105,9 +105,9 @@ TEST(EMtQueueTest, testWaitPassByReference) {
   mt::EMtQueue<DummyVal> q{};
   DummyVal out{};
   {
-    
+
     for (int32_t idx = 0; idx < 5; idx++) {
-      DummyVal in{idx,idx};
+      DummyVal in{idx, idx};
       q.push(in);
     }
   }
@@ -116,4 +116,22 @@ TEST(EMtQueueTest, testWaitPassByReference) {
     ASSERT_EQ(out.val1, idx);
     ASSERT_EQ(out.val2, idx);
   }
+}
+
+TEST(EMtQueueTest, lastElementPopUnblocksPushes) {
+  mt::EMtQueue<DummyVal, 2> q{};
+  DummyVal val{};
+
+  q.push(DummyVal{0, 0});
+  q.push(DummyVal{1, 1});
+  ASSERT_EQ(q.push(DummyVal{3, 3}), false);
+
+  ASSERT_EQ(q.pop(val), true);
+  ASSERT_EQ(val.val1 == 0 & val.val2 == 0, true);
+
+  ASSERT_EQ(q.pop(val), true);
+  ASSERT_EQ(val.val1 == 1 & val.val2 == 1, true);
+
+  ASSERT_EQ(q.push(DummyVal{2, 2}), true);
+  ASSERT_EQ(q.push(DummyVal{7, 7}), true);
 }
