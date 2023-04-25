@@ -68,24 +68,24 @@ public:
   bool pop(T &elem) {
     int32_t end = 0;
     int32_t start = _b.load();
+    bool res{false};
+
     if ((end = _front.load(std::memory_order_acquire)) >= 0) {
       if (((end < MAX_SIZE || start < end) && start != end) || end == 0) {
         elem = _q[start];
         _b.store(start + 1, std::memory_order_release);
 
-        return true;
-      } else if (end == MAX_SIZE && start == end) {
+        res = true;
+      }
+
+      if (end == MAX_SIZE && start+1 == end) {
         _b.store(0, std::memory_order_release);
         _front.store(-1, std::memory_order_acquire);
-        return false;
-      } else {
-        return false;
+        return false | res;
       }
     }
-    // Queue is empty
-    else {
-      return false;
-    }
+
+    return res;
   }
 
   bool wait_pop(T &elem, uint32_t timeout_us = 1000) {
